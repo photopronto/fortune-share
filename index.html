@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1a1625">
+<title>Your fortune</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1625;
+    --text: #ffffff;
+    --accent: #ffb000;
+    --on-accent: #1a1625;
+    --muted: color-mix(in srgb, var(--text) 68%, transparent);
+    --line: color-mix(in srgb, var(--text) 16%, transparent);
+    --card: color-mix(in srgb, var(--text) 7%, transparent);
+    --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--bg);
+    background-image: radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
+    background-attachment: fixed;
+    color: var(--text);
+    font: 16px/1.5 var(--sans);
+  }
+  main {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: max(28px, env(safe-area-inset-top)) 20px max(40px, env(safe-area-inset-bottom));
+  }
+  .logo { display: block; max-width: 180px; max-height: 72px; margin: 0 auto 20px; object-fit: contain; }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(32px, 9vw, 42px);
+    line-height: 1.05;
+    text-align: center;
+    margin: 0 0 8px;
+    letter-spacing: 0.01em;
+  }
+  .stars { display: block; text-align: center; color: var(--accent); letter-spacing: 0.6em; font-size: 12px; margin: 0 0 22px; padding-left: 0.6em; }
+  .message { text-align: center; color: var(--muted); margin: 0 0 24px; }
+  .fortune {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(24px, 6.6vw, 30px);
+    line-height: 1.3;
+    text-align: center;
+    margin: 0 0 28px;
+    padding: 0 6px;
+  }
+  .fortune::before, .fortune::after { color: var(--accent); }
+  .fortune::before { content: "\201C"; }
+  .fortune::after { content: "\201D"; }
+  .receipt-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 24px;
+  }
+  .receipt {
+    width: 78%;
+    max-width: 300px;
+    background: #fff;
+    padding: 10px 10px 14px;
+    border-radius: 2px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.2);
+    transform: rotate(-1.2deg);
+    cursor: zoom-in;
+    border: 0;
+  }
+  .receipt img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .photo {
+    display: block;
+    width: 100%;
+    border-radius: 14px;
+    margin: 0 0 16px;
+    background: var(--card);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .actions { display: grid; gap: 10px; margin: 0 0 28px; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 52px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font: 600 16px/1.2 var(--sans);
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  form .btn-primary { width: 100%; }
+  .btn-primary { background: var(--accent); color: var(--on-accent); }
+  .btn-secondary { background: transparent; color: var(--text); border-color: var(--line); }
+  .btn:focus-visible, input:focus-visible, .link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .btn[disabled] { opacity: 0.6; cursor: default; }
+  .note { text-align: center; color: var(--muted); font-size: 13px; margin: 0; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px 20px;
+    margin: 0 0 20px;
+  }
+  .card h2 { font-family: var(--serif); font-weight: 600; font-size: 28px; line-height: 1.1; margin: 0 0 6px; text-align: center; }
+  .card p { margin: 0 0 16px; color: var(--muted); text-align: center; }
+  label.field { display: block; margin: 0 0 14px; font-weight: 500; font-size: 14px; }
+  label.field span { display: block; margin: 0 0 6px; }
+  input[type=text], input[type=email] {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 70%, #000);
+    color: var(--text);
+    font: 16px var(--sans);
+  }
+  .consent { display: flex; gap: 12px; align-items: flex-start; margin: 4px 0 18px; font-size: 14px; color: var(--muted); }
+  .consent input { width: 22px; height: 22px; margin: 1px 0 0; flex: none; accent-color: var(--accent); }
+  .links { font-size: 13px; text-align: center; margin: 14px 0 0; color: var(--muted); }
+  .link { color: var(--text); text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; font: inherit; cursor: pointer; padding: 6px; }
+  .error { color: #ff8a80; font-size: 14px; text-align: center; margin: 0 0 12px; min-height: 1em; }
+  .state { text-align: center; padding: 22vh 10px 0; }
+  .state h1 { margin-bottom: 12px; }
+  .state p { color: var(--muted); margin: 0 auto; max-width: 320px; }
+  .spinner {
+    width: 44px; height: 44px; margin: 0 auto 22px;
+    border-radius: 50%;
+    border: 3px solid var(--line);
+    border-top-color: var(--accent);
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } .receipt { transform: none; } }
+  .zoom {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+    display: none; align-items: center; justify-content: center; padding: 20px; z-index: 10; cursor: zoom-out;
+  }
+  .zoom.open { display: flex; }
+  .zoom img { max-width: 100%; max-height: 100%; background: #fff; padding: 8px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite">
+  <div class="state"><div class="spinner" aria-hidden="true"></div><p>Reading the stars&hellip;</p></div>
+</main>
+<div class="zoom" id="zoom" role="dialog" aria-label="Your fortune, full size"><img alt=""></div>
+
+<script>
+(() => {
+  const API = "https://mfsxkomjbhlvufgosrtp.supabase.co/functions/v1/ft-share";
+  const app = document.getElementById("app");
+  const zoom = document.getElementById("zoom");
+
+  // The link id comes from /v/<id>, or ?id=<id> as a fallback
+  const fromPath = location.pathname.match(/\/v\/([A-Za-z0-9]{8})\/?$/);
+  const id = fromPath ? fromPath[1] : new URLSearchParams(location.search).get("id");
+
+  // ---- helpers ----------------------------------------------------------
+  const el = (tag, attrs = {}, ...children) => {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === "class") node.className = v;
+      else if (k === "text") node.textContent = v;
+      else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v === true ? "" : v);
+    }
+    for (const c of children.flat()) if (c) node.append(c);
+    return node;
+  };
+  const put = (...nodes) => app.replaceChildren(...nodes.flat().filter(Boolean));
+  const isHex = (v) => typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v);
+  const isHttps = (v) => typeof v === "string" && /^https:\/\//i.test(v);
+  const luminance = (hex) => {
+    const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  };
+  const formatDate = (iso) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+  function applyBranding(site) {
+    const c = (site && site.colours) || {};
+    const root = document.documentElement.style;
+    if (isHex(c.background)) {
+      root.setProperty("--bg", c.background);
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", c.background);
+    }
+    if (isHex(c.text)) root.setProperty("--text", c.text);
+    if (isHex(c.accent)) {
+      root.setProperty("--accent", c.accent);
+      root.setProperty("--on-accent", luminance(c.accent) > 0.45 ? "#111111" : "#ffffff");
+    }
+    if (site && site.heading) document.title = site.heading;
+  }
+
+  function header(site) {
+    return [
+      site && isHttps(site.logo_url) ? el("img", { class: "logo", src: site.logo_url, alt: "" }) : null,
+      el("h1", { text: (site && site.heading) || "Your fortune" }),
+      el("span", { class: "stars", "aria-hidden": "true", text: "✦ ✦ ✦" }),
+    ];
+  }
+
+  function showState(title, text, spinner, site) {
+    put(el("div", { class: "state" },
+      spinner ? el("div", { class: "spinner", "aria-hidden": "true" }) : null,
+      site && isHttps(site.logo_url) ? el("img", { class: "logo", src: site.logo_url, alt: "" }) : null,
+      el("h1", { text: title }),
+      el("p", { text: text }),
+    ));
+  }
+
+  // ---- loading ------------------------------------------------------------
+  let tries = 0;
+  async function load(skip) {
+    if (!id || !/^[A-Za-z0-9]{8}$/.test(id)) {
+      return showState("Fortune not found", "Check the link on your receipt and try scanning the QR code again.");
+    }
+    let res, data;
+    try {
+      res = await fetch(`${API}?id=${encodeURIComponent(id)}${skip ? "&skip=1" : ""}`, { cache: "no-store" });
+      data = await res.json();
+    } catch {
+      return showState("No connection", "We couldn't reach your fortune. Check your signal and refresh the page.");
+    }
+    if (data.microsite) applyBranding(data.microsite);
+
+    if (data.status === "not_found") {
+      return showState("Fortune not found", "Check the link on your receipt and try scanning the QR code again.");
+    }
+    if (data.status === "expired") {
+      return showState("This fortune has faded", "Digital copies are only kept for a limited time, and this one has now expired.");
+    }
+    if (data.status === "processing") {
+      tries += 1;
+      if (tries > 40) {
+        return showState("Still on its way", "Your fortune is taking longer than usual to arrive. Please try again in a few minutes.", false, data.microsite);
+      }
+      showState("Your fortune is on its way", "It'll appear here in a few seconds.", true, data.microsite);
+      return setTimeout(() => load(skip), 3000);
+    }
+    if (data.status !== "ok") {
+      return showState("Something went wrong", "Please refresh the page to try again.");
+    }
+    if (data.locked) return renderGate(data);
+    renderFortune(data);
+  }
+
+  // ---- the fortune ---------------------------------------------------------
+  function renderFortune(data) {
+    const site = data.microsite || {};
+    const receiptBtn = data.receipt_url ? el("button", {
+      class: "receipt", type: "button", "aria-label": "Show your fortune full size",
+      onclick: () => { zoom.querySelector("img").src = data.receipt_url; zoom.classList.add("open"); },
+    }, el("img", { src: data.receipt_url, alt: `Your printed fortune: ${data.fortune_text || ""}` })) : null;
+
+    const actions = el("div", { class: "actions" },
+      data.receipt_download_url ? el("a", { class: "btn btn-primary", href: data.receipt_download_url, text: site.download_label || "Download your fortune" }) : null,
+      data.photo_download_url ? el("a", { class: "btn btn-secondary", href: data.photo_download_url, text: "Download your photo" }) : null,
+    );
+    if (navigator.canShare && data.receipt_url) {
+      const share = el("button", { class: "btn btn-secondary", type: "button", text: "Share" });
+      share.addEventListener("click", async () => {
+        share.disabled = true;
+        try {
+          const blob = await (await fetch(data.receipt_url)).blob();
+          const file = new File([blob], `fortune-${data.id}.png`, { type: "image/png" });
+          if (navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: site.heading || "My fortune" });
+        } catch { /* cancelled or not supported */ }
+        share.disabled = false;
+      });
+      actions.append(share);
+    }
+
+    put(
+      header(site),
+      site.message ? el("p", { class: "message", text: site.message }) : null,
+      data.fortune_text ? el("p", { class: "fortune", text: data.fortune_text }) : null,
+      receiptBtn ? el("div", { class: "receipt-wrap" }, receiptBtn) : null,
+      actions,
+      data.photo_url ? el("img", { class: "photo", src: data.photo_url, alt: "Your photo", loading: "lazy" }) : null,
+      el("p", { class: "note", text: `Save it soon: this page is available until ${formatDate(data.expires_at)}.` }),
+    );
+  }
+
+  // ---- the optional sign-up gate ---------------------------------------------
+  function renderGate(data) {
+    const site = data.microsite || {};
+    const gate = site.gate || {};
+    const error = el("p", { class: "error", role: "alert" });
+    const nameInput = el("input", { type: "text", name: "name", autocomplete: "name", required: true });
+    const emailInput = el("input", { type: "email", name: "email", autocomplete: "email", inputmode: "email", required: true });
+    const consentInput = el("input", { type: "checkbox", name: "consent", required: true, id: "consent" });
+    const submit = el("button", { class: "btn btn-primary", type: "submit",
+      text: gate.kind === "competition" ? "Enter and see my fortune" : "See my fortune" });
+
+    const legal = [];
+    if (isHttps(gate.privacy_url)) legal.push(el("a", { class: "link", href: gate.privacy_url, target: "_blank", rel: "noopener", text: "Privacy policy" }));
+    if (isHttps(gate.terms_url)) legal.push(el("a", { class: "link", href: gate.terms_url, target: "_blank", rel: "noopener", text: gate.kind === "competition" ? "Competition terms" : "Terms" }));
+
+    const form = el("form", { class: "card", novalidate: true },
+      el("h2", { text: gate.heading || (gate.kind === "competition" ? "Enter our competition" : "One last step") }),
+      gate.intro ? el("p", { text: gate.intro }) : null,
+      gate.ask_name !== false ? el("label", { class: "field" }, el("span", { text: "Your name" }), nameInput) : null,
+      el("label", { class: "field" }, el("span", { text: "Email address" }), emailInput),
+      el("label", { class: "consent", for: "consent" }, consentInput, el("span", { text: gate.consent_text || "I agree to be contacted by email." })),
+      error,
+      submit,
+      legal.length ? el("div", { class: "links" }, ...legal) : null,
+      gate.allow_skip ? el("div", { class: "links" }, el("button", {
+        class: "link", type: "button", text: "No thanks, just show my fortune",
+        onclick: () => { tries = 0; load(true); },
+      })) : null,
+    );
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      error.textContent = "";
+      if (gate.ask_name !== false && !nameInput.value.trim()) { error.textContent = "Please enter your name"; return nameInput.focus(); }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailInput.value.trim())) { error.textContent = "Please enter a valid email address"; return emailInput.focus(); }
+      if (!consentInput.checked) { error.textContent = "Please tick the box to agree"; return consentInput.focus(); }
+      submit.disabled = true;
+      try {
+        const res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, name: nameInput.value.trim(), email: emailInput.value.trim(), consent: true }),
+        });
+        const out = await res.json();
+        if (!res.ok) throw new Error(out.error || "Could not save, please try again");
+        if (out.status === "processing") { tries = 0; return load(true); }
+        renderFortune({ ...data, ...out });
+      } catch (err) {
+        error.textContent = err.message || "Could not save, please try again";
+        submit.disabled = false;
+      }
+    });
+
+    put(
+      header(site),
+      el("p", { class: "message", text: "Your fortune has been read. Tell us where to send it, and it's yours." }),
+      form,
+    );
+  }
+
+  zoom.addEventListener("click", () => zoom.classList.remove("open"));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") zoom.classList.remove("open"); });
+  load(false);
+})();
+</script>
+</body>
+</html>
